@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+        <head>
+            <title>A simple webpage </title>
+        </head>
+        <body>
+                <nav>
+                        <a href="/news/home"> Home </a> | <a href="{% url 'aboutme' %}">About</a>
+                    </nav>
+            <h1>Hi, I am {{ request.user }}. My full name : {{ user_full_name }} </h1>
+             <div>
+
+             </div>
+        </body>
+</html>

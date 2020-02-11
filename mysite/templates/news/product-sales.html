@@ -1,0 +1,188 @@
+{% extends "news/base_js.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row">
+	<!-- grid column -->
+	<div class="col-lg-12">
+		<!-- .card -->
+		<div class="card card-fluid">
+			<!-- .card-body -->
+			<div class="card-body">
+				<div>
+					<!--form method="post" novalidate-->
+					<form method="post" id="tran_table_data" data-url="{% url 'sales-create-insert' %}"
+						class="update-form">
+						<div class="form-group">
+							<!-- .card -->
+							<div class="card">
+								<!-- .card-body -->
+								<div class="card-body">
+									<div class="form-row">
+										<div class="form-item col-md-10 mb-0">
+											<h3 class="card-title">Sales Product</h3>
+											<!-- form .needs-validation -->
+										</div>
+									</div>
+									<div>
+										<!--form method="post" novalidate-->
+										{% csrf_token %}
+										<div class="form-row">
+											<div class="form-item col-md-4 mb-0">
+												{{ form.product_code|as_crispy_field }}
+											</div>
+											<div class="form-item col-md-4 mb-0">
+												{{ form.product_name|as_crispy_field }}
+											</div>
+											<div class="form-item col-md-4 mb-0">
+												{{ form.unit_price|as_crispy_field }}
+											</div>
+											<div class="form-item col-md-4 mb-0">
+												{{ form.total_quantity|as_crispy_field }}
+											</div>
+											<div class="form-item col-md-4 mb-0">
+												{{ form.total_price|as_crispy_field }}
+											</div>
+										</div>										
+										<button type="button" id="btnAddItem" class="btn btn-primary">Create Sales</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div><!-- /.card-body -->
+			</div><!-- /.card -->
+		</div>
+		<!-- /grid column -->
+	</div>
+
+{% endblock content %}
+
+{% block js %}
+
+
+
+	<script>
+
+$(function () {
+
+
+$("#id_product_code").on("change paste keyup", function () {
+	get_product_info();
+});
+
+
+function get_product_info() {
+	var product_code = document.getElementById('id_product_code').value;
+	$.ajax({
+		url: "get-product-info/" + product_code,
+		type: 'GET',
+		success: function (data) {
+			if (data.form_is_valid) {
+			console.log(data.product_name)
+				$('#id_product_name').val(data.product_name);
+				$('#id_unit_price').val(data.sales_price);
+			} else {
+				$('#id_product_name').val('');
+				$('#id_unit_price').val('');
+			}
+		}
+	})
+	return false;
+}
+
+
+$("#id_total_quantity").on("change paste keyup", function () {
+	var total_quantity = document.getElementById('id_total_quantity').value;
+	var unit_price = document.getElementById('id_unit_price').value;
+	var total_price = Number(unit_price)*Number(total_quantity);
+	$('#id_total_price').val(total_price);
+});
+
+
+    $(function () {
+        $('#btnAddItem').click(function () {
+            post_tran_table_data();
+
+        });
+    });
+
+    function post_tran_table_data() {
+        var data_string = $("#tran_table_data").serialize();
+        var data_url = $("#tran_table_data").attr('data-url');
+        $.ajax({
+            url: data_url,
+            data: data_string,
+            type: 'POST',
+            dataType: 'json',
+            success: function (data) {
+                if (data.form_is_valid) {
+                    document.getElementById("tran_table_data").reset();
+					alert(data.succ_message);
+                } else {
+					alert(data.error_message);
+                }
+            }
+        })
+        return false;
+    }
+
+    // This function gets cookie with a given name
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    var csrftoken = getCookie('csrftoken');
+
+    /*
+    The functions below will create a header with csrftoken
+    */
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    function sameOrigin(url) {
+        // test that a given url is a same-origin URL
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+    }
+
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                // Send the token to same-origin, relative URLs only.
+                // Send the token only if the method warrants CSRF protection
+                // Using the CSRFToken value acquired earlier
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+});
+
+	</script>
+
+
+{% endblock js %}

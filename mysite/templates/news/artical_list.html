@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+        <head>
+            <title>A simple webpage </title>
+        </head>
+        <body>
+            <nav>
+                <a href="/news/home"> Home </a> | <a href="{% url 'aboutme' %}">About</a>
+            </nav>
+            <h1>My Simple Webpage</h1>
+            <div>
+                <p>
+                    {% for num in my_list %}
+
+                    {% if num <= 3  %}
+                    <h{{ num }}> Less then or equal  3 </h{{ num }}>
+
+                    {% else %}
+
+                    <h{{ num }}> More then 3 </h{{ num }}>
+
+                    {% endif %}
+                    {% endfor %}
+                </p>
+            </div>
+        </body>
+</html>

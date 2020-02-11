@@ -1,0 +1,48 @@
+{% extends "news/base_js.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<form action="{% url 'employee-signup' %}" method="post" class="auth-form">
+	{% csrf_token %}
+
+	<div class="form-group">
+		{% if message %}
+		<div class="font-weight-bold" align="center">
+			{{ message }}
+		</div>
+		{% endif %}
+	</div>
+	<div class="form-group">
+		<div class="form-label-group">
+			<input type="text" name="username" id="inputUser" class="form-control" placeholder="Username" autofocus="">  
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<div class="form-label-group">
+			<input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password">  
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<div class="form-label-group">
+			<input type="password" name="confirm_password" id="idconfirm_password" class="form-control" placeholder="Confirm Password">  
+		</div>
+	</div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign Up</button>
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'employee-login' %}" class="btn btn-secondary btn-block btn-lg"> Sign In </a>
+        </div>
+    </div>
+	
+</form> 
+{% endblock content %}
+
+{% block js %}
+
+{% endblock js %}
